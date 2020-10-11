@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -19,7 +20,8 @@ namespace cyusbDemo
         int loopTime = 1;   // 空格次数
         string Section = "Information";
         int cN = 0;
-       
+
+        double min, hour;
 
         #region U盘设备相关常量
         public const int WM_DEVICECHANGE = 0x219;//U盘插入后，OS的底层会自动检测到，然后向应用程序发送“硬件设备状态改变“的消息
@@ -46,7 +48,7 @@ namespace cyusbDemo
         {
             InitializeComponent();
             count = 0;
-            this.Height = 70;
+            this.Height = 110;
             //Combobox.SelectedIndex = Combobox.Items.IndexOf(“默认选中文本”);
             comboBox1.SelectedIndex = comboBox1.Items.IndexOf("200");
             comboBox2.SelectedIndex = comboBox2.Items.IndexOf("0");
@@ -80,8 +82,38 @@ namespace cyusbDemo
 
 
             button1_Click(sender, e);
-           
+            //ShowTime();
+            lbl_Time.Text = DateTime.Now.ToString("f"); // + " " + DateTime.Now.ToString("dddd");
 
+
+        }
+
+        private void ShowTime()
+        {
+            //创建线程
+            System.Threading.Thread P_thread = new System.Threading.Thread(
+             () =>   //使用Lambda表达式
+             {
+                 while (true)
+                 {
+                     this.Invoke(
+           (MethodInvoker)delegate ()  //操作窗体线程,使用匿名方法
+           {
+               this.Refresh();  //刷新窗体
+               Graphics P_Graphics = CreateGraphics(); //创建绘图对象
+
+               // 绘制出系统时间
+               P_Graphics.DrawString(
+               DateTime.Now.ToString("yyyy年MM月dd日 HH时mm分 ss 秒"),
+                   new Font("宋体", 8), Brushes.DarkBlue, new Point(0, 5));
+           }
+                                );
+                     System.Threading.Thread.Sleep(1000);  //线程挂起1秒钟
+                 }
+             }
+                          );
+            P_thread.IsBackground = true;  //线程设置为后台线程 
+            P_thread.Start();     //线程开始执行
         }
 
         //获取配置文件中的值 
@@ -154,19 +186,30 @@ namespace cyusbDemo
 
                     for (int i = 0; i < loopTime; i++)
                     {
-                        //if (cN % 6 == 0 || cN % 7 == 0 || cN % 8 == 0)
-                        //{
+                       
                             Thread.Sleep(delay);
                             SendKeys.Send(" ");
                         Thread.Sleep(delay);
-                        //}
+                        
                     }
-                    // cN % 20 == 0 || cN % 12 == 0 cN % 18 == 0 |||| cN % 14 == 0 || cN % 16 == 0
-                    if ( cN % 6 == 0   )
+                    // usb检测每6次进行一次
+                    if ( cN % 6 == 0 )
                     {
                         
                         cNumber++;
                         lbl_Number.Text = cNumber.ToString();
+                        DateTime dtone = Convert.ToDateTime(lbl_Time.Text);
+                        DateTime dttwo = DateTime.Now;
+                        TimeSpan ts = dttwo - dtone;
+                        min = ts.Minutes==0?1:ts.Minutes;
+                        
+                        hour = ts.Hours;
+                        Console.WriteLine("分钟:{0},小时数:{1}", min, hour);
+                        lbl_m.Text = (Convert.ToInt64(lbl_Number.Text) / min).ToString("f0");
+
+
+                        
+
                         cN = 0;
                         Thread.Sleep(delay);
 
@@ -330,19 +373,24 @@ namespace cyusbDemo
 
         private void lbl_Number_Click(object sender, EventArgs e)
         {
-            this.Height = 180;
+            this.Height = 210;
             //Thread.Sleep(30000);
             
         }
 
         private void WinUpan_MouseLeave(object sender, EventArgs e)
         {
-            //this.Height = 70;
+            this.Height = 100;
         }
 
         private void button1_MouseLeave(object sender, EventArgs e)
         {
-            this.Height = 70;
+            this.Height = 100;
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
 
         }
     }
