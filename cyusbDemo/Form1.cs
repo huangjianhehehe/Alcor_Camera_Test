@@ -21,7 +21,7 @@ namespace cyusbDemo
         string Section = "Information";
         int cN = 0;
 
-        double min, hour,min2;
+        double min, hour, min2;
 
         #region U盘设备相关常量
         public const int WM_DEVICECHANGE = 0x219;//U盘插入后，OS的底层会自动检测到，然后向应用程序发送“硬件设备状态改变“的消息
@@ -72,7 +72,7 @@ namespace cyusbDemo
                 }
             }
         }
-  
+
 
 
         private void Form1_Load(object sender, EventArgs e)
@@ -97,7 +97,7 @@ namespace cyusbDemo
                  while (true)
                  {
                      this.Invoke(
-           (MethodInvoker)delegate ()  //操作窗体线程,使用匿名方法
+           (MethodInvoker)delegate()  //操作窗体线程,使用匿名方法
            {
                this.Refresh();  //刷新窗体
                Graphics P_Graphics = CreateGraphics(); //创建绘图对象
@@ -126,80 +126,79 @@ namespace cyusbDemo
 
         protected override void WndProc(ref Message m)
         {
-            
+
             try
             {
-               
-                if (m.Msg==WM_DEVICECHANGE)
+
+                if (m.Msg == WM_DEVICECHANGE)
                 {
-                    
+
                     cN++;
                     DateTime dt_start = DateTime.Now;
-                  
-                  
+
+
                     switch (m.WParam.ToInt32())
                     {
                         case DBT_DEVNODES_CHANGED:
-                           
-                      
+
+
 
                             break;
 
                         case DBT_DEVICEARRIVAL:
-                           
+
                             DriveInfo[] s = DriveInfo.GetDrives();
                             s.Any(t =>
                             {
-                                if (t.DriveType==DriveType.Removable)
+                                if (t.DriveType == DriveType.Removable)
                                 {
                                     count++;
                                     return true;
                                 }
-                               
+
                                 return false;
                             });
-                            if (count==num_Alcor)
+                            if (count == num_Alcor)
                             {
                                 Thread.Sleep(delay);
                                 SendKeys.Send(" ");
-                               
+
                             }
-                            else if((count<0)&&(count>8))
+                            else if ((count < 0) && (count > 8))
                             {
                                 count = 0;
                             }
-                           
+
                             break;
                         case DBT_DEVICEREMOVECOMPLETE:
-                           
+
                             count--;
-                           
-                           
-                            if (count<0)
+
+
+                            if (count < 0)
                             {
-                                count = 0; 
+                                count = 0;
                             }
                             break;
                         default:
-                           
+
                             break;
                     }
-                    
-                 
+
+
 
 
                     for (int i = 0; i < loopTime; i++)
                     {
-                       
-                            Thread.Sleep(delay);
-                            SendKeys.Send(" ");
+
                         Thread.Sleep(delay);
-                        
+                        SendKeys.Send(" ");
+                        Thread.Sleep(delay);
+
                     }
-                     
+
                     // usb检测每6次进行一次
-                    if (cN % 7 == 0) 
-                    
+                    if (cN % 7 == 0)
                     {
                         // 检测时间判断
                         DateTime dt_stop = DateTime.Now;
@@ -211,7 +210,7 @@ namespace cyusbDemo
                             DateTime dtone = Convert.ToDateTime(lbl_Time.Text);
                             DateTime dttwo = DateTime.Now;
                             TimeSpan ts = dttwo - dtone;
-                            min2 =  Math.Round(ts.TotalMilliseconds / 1000.0 / 60.0);
+                            min2 = Math.Round(ts.TotalMilliseconds / 1000.0 / 60.0);
                             min = min2 == 0 ? 1 : min2;
 
                             hour = ts.Hours;
@@ -219,18 +218,18 @@ namespace cyusbDemo
                             lbl_m.Text = (cNumber / min).ToString("f0");
 
                         }
-                        
 
-                        
+
+
 
                         cN = 0;
                         Thread.Sleep(delay);
 
                     }
-                   
+
                     WritePrivateProfileString(Section, "cNumber", lbl_Number.Text, IniFilePath);
-                   
-                    
+
+
                 }
 
             }
@@ -240,10 +239,10 @@ namespace cyusbDemo
                 return;
             }
 
-            
+
             base.WndProc(ref m);
 
-          
+
 
         }
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -280,22 +279,22 @@ namespace cyusbDemo
 
         #region 无连框窗体拖动
         //using System.Runtime.InteropServices;
- 
-    [DllImport("user32.dll")]
-    public static extern bool ReleaseCapture();
-    [DllImport("user32.dll")]
-    public static extern bool SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
-    public const int WM_SYSCOMMAND = 0x0112;
-    public const int SC_MOVE = 0xF010;
-    public const int HTCAPTION = 0x0002;
+
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+        [DllImport("user32.dll")]
+        public static extern bool SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+        public const int WM_SYSCOMMAND = 0x0112;
+        public const int SC_MOVE = 0xF010;
+        public const int HTCAPTION = 0x0002;
 
 
-    #endregion
+        #endregion
 
 
 
 
-    private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
@@ -326,7 +325,7 @@ namespace cyusbDemo
             btn_Click(sender, e);
             string outString;
             IniFilePath = Application.StartupPath + "\\Config.ini";
-            lbl_Time.Text = DateTime.Now.ToString("f"); 
+            lbl_Time.Text = DateTime.Now.ToString("f");
             try
             {
 
@@ -390,7 +389,7 @@ namespace cyusbDemo
         {
             this.Height = 210;
             //Thread.Sleep(30000);
-            
+
         }
 
         private void WinUpan_MouseLeave(object sender, EventArgs e)
@@ -410,7 +409,41 @@ namespace cyusbDemo
         }
 
         public int min1 { get; set; }
+
+        private void WinUpan_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Height = 210;
+        }
+
+        private void WinUpan_KeyPress(object sender, KeyPressEventArgs e)
+        {
+           
+        }
+
+         //重写ProcessCmdKey的方法 |实现按ESC键退出
+        protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg, System.Windows.Forms.Keys keyData)
+        {
+            int WM_KEYDOWN = 256;
+            int WM_SYSKEYDOWN = 260;
+            if (msg.Msg == WM_KEYDOWN | msg.Msg == WM_SYSKEYDOWN)
+            {
+                switch (keyData)
+                {
+                    case Keys.Escape:
+                        if (MessageBox.Show("你真的要退出测试程序?", "退出", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            this.Close();
+                            Process.GetCurrentProcess().Kill();
+                        }
+                        break;
+                }
+            }
+            return false;
+        }
+
+
     }
+    
     
 }
 

@@ -109,10 +109,12 @@
             // 
             // button1
             // 
-            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.Yellow;
+            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.LightGreen;
+            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Red;
+            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Yellow;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.button1.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.button1.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.button1.ForeColor = System.Drawing.Color.Maroon;
             this.button1.Location = new System.Drawing.Point(202, 161);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(74, 42);
@@ -289,6 +291,7 @@
             this.lbl_Time.Size = new System.Drawing.Size(14, 13);
             this.lbl_Time.TabIndex = 0;
             this.lbl_Time.Text = "0";
+            this.lbl_Time.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.lbl_Time.Click += new System.EventHandler(this.label2_Click);
             // 
             // WinUpan
@@ -324,6 +327,8 @@
             this.TransparencyKey = System.Drawing.Color.Yellow;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WinUpan_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.WinUpan_KeyPress);
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.WinUpan_MouseDoubleClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.WinUpan_MouseDown);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
