@@ -21,7 +21,7 @@ namespace cyusbDemo
         string Section = "Information";
         int cN = 0;
 
-        double min, hour;
+        double min, hour,min2;
 
         #region U盘设备相关常量
         public const int WM_DEVICECHANGE = 0x219;//U盘插入后，OS的底层会自动检测到，然后向应用程序发送“硬件设备状态改变“的消息
@@ -134,6 +134,7 @@ namespace cyusbDemo
                 {
                     
                     cN++;
+                    DateTime dt_start = DateTime.Now;
                   
                   
                     switch (m.WParam.ToInt32())
@@ -183,6 +184,9 @@ namespace cyusbDemo
                            
                             break;
                     }
+                    
+                 
+
 
                     for (int i = 0; i < loopTime; i++)
                     {
@@ -192,21 +196,30 @@ namespace cyusbDemo
                         Thread.Sleep(delay);
                         
                     }
+                     
                     // usb检测每6次进行一次
-                    if ( cN % 6 == 0 )
+                    if (cN % 7 == 0) 
+                    
                     {
-                        
-                        cNumber++;
-                        lbl_Number.Text = cNumber.ToString();
-                        DateTime dtone = Convert.ToDateTime(lbl_Time.Text);
-                        DateTime dttwo = DateTime.Now;
-                        TimeSpan ts = dttwo - dtone;
-                        min = ts.Minutes==0?1:ts.Minutes;
-                        
-                        hour = ts.Hours;
-                        Console.WriteLine("分钟:{0},小时数:{1}", min, hour);
-                        lbl_m.Text = (Convert.ToInt64(lbl_Number.Text) / min).ToString("f0");
+                        // 检测时间判断
+                        DateTime dt_stop = DateTime.Now;
+                        TimeSpan ts_start_stop = dt_stop - dt_start;
+                        if (ts_start_stop.Milliseconds > 400)
+                        {
+                            cNumber++;
+                            lbl_Number.Text = cNumber.ToString();
+                            DateTime dtone = Convert.ToDateTime(lbl_Time.Text);
+                            DateTime dttwo = DateTime.Now;
+                            TimeSpan ts = dttwo - dtone;
+                            min2 =  Math.Round(ts.TotalMilliseconds / 1000.0 / 60.0);
+                            min = min2 == 0 ? 1 : min2;
 
+                            hour = ts.Hours;
+                            Console.WriteLine("分钟:{0},小时数:{1}", min, hour);
+                            lbl_m.Text = (cNumber / min).ToString("f0");
+
+                        }
+                        
 
                         
 
@@ -214,9 +227,10 @@ namespace cyusbDemo
                         Thread.Sleep(delay);
 
                     }
-
+                   
                     WritePrivateProfileString(Section, "cNumber", lbl_Number.Text, IniFilePath);
-
+                   
+                    
                 }
 
             }
@@ -305,13 +319,14 @@ namespace cyusbDemo
             e.Cancel = true;
 
         }
-        #region 单击按钮写入到配置文件中,这个有点多余,本程序不使用
+        #region 单击按钮写入到配置文件
 
         private void button1_Click(object sender, EventArgs e)
         {
             btn_Click(sender, e);
             string outString;
             IniFilePath = Application.StartupPath + "\\Config.ini";
+            lbl_Time.Text = DateTime.Now.ToString("f"); 
             try
             {
 
@@ -393,6 +408,8 @@ namespace cyusbDemo
         {
 
         }
+
+        public int min1 { get; set; }
     }
     
 }
